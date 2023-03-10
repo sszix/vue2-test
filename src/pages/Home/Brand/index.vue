@@ -39,7 +39,7 @@
 
 <script>
 export default {
-  name: "index",
+  name: "Brand",
 }
 </script>
 

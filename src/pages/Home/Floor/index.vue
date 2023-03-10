@@ -88,7 +88,7 @@
 
 <script>
 export default {
-  name: "index",
+  name: "Floor",
 }
 </script>
 
