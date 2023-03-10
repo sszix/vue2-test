@@ -58,15 +58,26 @@ export default {
   },
   methods: {
     goSearch() {
-      this.$router.push({
-        name: 'search',
-        query: {
-          keyword: "" || undefined,
-        },
-        params: {
-          k: this.keyword.toUpperCase(),
-        },
-      })
+      // 将query和params参数都传递过去
+      if (this.$route.query) {
+        let locations = {
+          name: "search",
+          params: {
+            keyword: this.keyword || undefined,
+          },
+        }
+        locations.query = this.$route.query
+        this.$router.push(locations)
+        // this.$router.push({
+        //   name: 'search',
+        //   query: {
+        //     keyword: "" || undefined,
+        //   },
+        //   params: {
+        //     keyword: this.keyword.toUpperCase(),
+        //   },
+        // })
+      }
     },
   },
 }

@@ -1,11 +1,11 @@
 // search模块的仓库
 const state = {}
-const mutation = {}
+const mutations = {}
 const actions = {}
 const getters = {}
 export default {
     state,
-    mutation,
+    mutations,
     actions,
     getters,
 }
