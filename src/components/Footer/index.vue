@@ -98,7 +98,7 @@
 
 <script>
 export default {
-  name: "index",
+  name: "Footer",
 }
 </script>
 

@@ -49,7 +49,7 @@
 
 <script>
 export default {
-  name: "index",
+  name: "Header",
   data() {
     return {
       //   收集用户输入信息
