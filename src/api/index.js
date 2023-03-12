@@ -12,3 +12,8 @@ export const reqCategoryList = () => {
 }
 // 获取轮播图接口
 export const reqGetBannerList = () => mockRequests.get("/banner")
+//获取floor数据
+export const reqGetFloorList = () => mockRequests.get('/floor')
+//获取搜索模块内容 /api/list 方式post 需要带参数
+// 当前这个接口必须有参数
+export const reqGetSearchInfo = (params) => requests({url: '/list', method: "post", data: params})

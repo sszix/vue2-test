@@ -33,7 +33,8 @@
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
-          <input id="autocomplete" v-model="keyword" class="input-error input-xxlarge" type="text" />
+          <input id="autocomplete" v-model="keyword" class="input-error input-xxlarge"
+                 type="text" />
           <button
               class="sui-btn btn-xlarge btn-danger"
               type="button"
@@ -79,6 +80,11 @@ export default {
         // })
       }
     },
+  },
+  mounted() {
+    this.$bus.$on("clear", () => {
+      this.keyword = ""
+    })
   },
 }
 </script>

@@ -102,30 +102,53 @@
 <script>
 import {mapState} from 'vuex'
 // 引入swiper包
+import Swiper from 'swiper'
 
 export default {
   name: '',
   mounted() {
     //   发起ajax请求，将轮播图数据存储在仓库
     this.$store.dispatch('getBannerList')
+    // console.log("mounted")
   },
-  updated() {
-    var mySwiper = new Swiper('.swiper-container', {
-      direction: 'vertical', // 垂直切换选项
-      loop: true, // 循环模式选项
+  watch: {
+    // 通过监视bannerList数据发生变化，确保有数据
+    bannerList: {
+      handler() {
+        // 数据有了，还需要渲染，用nextTick确保渲染完毕
+        this.$nextTick(() => {
+          // 数据和结构有了样式就可以生效
+          var mySwiper = new Swiper('.swiper-container', {
+            loop: true,// 循环模式选项
 
-      // 如果需要分页器
-      pagination: {
-        el: '.swiper-pagination',
+            // 如果需要分页器
+            pagination: {
+              el: '.swiper-pagination',
+              //分页器类型
+              type: "bullets",
+              clickable: true,
+            },
+            //自动轮播
+            autoplay: {
+              delay: 1000,
+              //新版本的写法：目前是5版本
+              // pauseOnMouseEnter: true,
+              //如果设置为true，当切换到最后一个slide时停止自动切换
+              stopOnLastSlide: true,
+              //用户操作swiper之后，是否禁止autoplay
+              disableOnInteraction: false,
+            },
+            // 如果需要前进后退按钮
+            navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            },
+          })
+        })
       },
-
-      // 如果需要前进后退按钮
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-    })
+    },
   },
+
   computed: {
     ...mapState({
       bannerList: state => state.home.bannerList,
