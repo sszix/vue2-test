@@ -25,7 +25,8 @@
             </i></li>
             <!--属性值的面包屑-->
             <li v-for="(attrValue, index) in searchParams.props" :key="index"
-                class="with-x">
+                class="with-x"
+            >
               {{ attrValue.split(":")[1] }}<i @click="removeAttr(index)">×
             </i></li>
           </ul>
@@ -38,24 +39,23 @@
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
+              <!--排序-->
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:isOne}" @click="changeOrder(1)">
+                  <a>综合
+                    <span v-show="isOne"
+                          :class=" {'icon-down':isDesc, 'icon-up':isAsc}"
+                          class="iconfont"
+                    ></span>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:isTwo}" @click="changeOrder(2)">
+                  <a>价格
+                    <span v-show="isTwo"
+                          :class=" {'icon-down':isDesc, 'icon-up':isAsc}"
+                          class="iconfont"
+                    ></span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -66,8 +66,9 @@
               <li v-for="(good,index) in goodsList" :key="good.id" class="yui3-u-1-5">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"><img
-                        :src="good.defaultImg" /></a>
+                    <router-link :to="`/detail/${good.id}`">
+                      <img :src="good.defaultImg" />
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -77,51 +78,34 @@
                   </div>
                   <div class="attr">
                     <a href="item.html" target="_blank"
-                       title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{
+                       title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】"
+                    >{{
                         good.title
-                                                                                                      }}</a>
+                     }}</a>
                   </div>
                   <div class="commit">
                     <i class="command">已有<span>2000</span>人评价</i>
                   </div>
                   <div class="operate">
                     <a class="sui-btn btn-bordered btn-danger" href="success-cart.html"
-                       target="_blank">加入购物车</a>
+                       target="_blank"
+                    >加入购物车</a>
                     <a class="sui-btn btn-bordered" href="javascript:void(0);">收藏</a>
                   </div>
                 </div>
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!--分页器-->
+          <!--total【总共多少天数据】 -pageSize【每一页有多少条】 -pageNo[当前在第几页]-->
+          <!--continues-连续页码数-->
+          <Pagination
+              :continues="5"
+              :pageNo="searchParams.pageNo"
+              :pageSize="searchParams.pageSize"
+              :total="total"
+              @getPageNo="getPageNo"
+          />
         </div>
       </div>
     </div>
@@ -130,7 +114,7 @@
 
 <script>
 import SearchSelector from './SearchSelector/SearchSelector'
-import index, {mapGetters} from 'vuex'
+import index, {mapGetters, mapState} from 'vuex'
 
 export default {
   name: 'Search',
@@ -157,7 +141,7 @@ export default {
         //当前分页器的页码  【默认初始值:1】
         pageNo: 1,
         //代表当前一页显示几条数据 【默认初始值:10】
-        pageSize: 3,
+        pageSize: 5,
       },
     }
   },
@@ -217,7 +201,35 @@ export default {
     removeAttr(index) {
       this.searchParams.props.splice(index, 1)
       this.getData()
-
+    },
+    // 改变排序
+    changeOrder(flag) {
+      // 标记用户点击的是那个
+      // 获取初始状态
+      let originFlag = this.searchParams.order.split(":")[0]
+      let originSort = this.searchParams.order.split(":")[1]
+      // 准备一个新的order容器用来储存更新后的值
+      let newOrder = ''
+      // 如果用户点击的是当前事件
+      if (flag == originFlag) {
+        // 改变排序
+        newOrder = `${originFlag}:${originSort == "desc" ? "asc" : "desc"}`
+        //   如果不是当前事件
+      } else {
+        // 就改变显示的事件，任何默认降序
+        newOrder = `${flag}:${"desc"}`
+      }
+      // 改变参数
+      this.searchParams.order = newOrder
+      // 重新请求
+      this.getData()
+    },
+    // 获取点击的当前页
+    getPageNo(pageNo) {
+      //   整理分页器参数
+      this.searchParams.pageNo = pageNo
+      //   再次请求
+      this.getData()
     },
   },
   computed: {
@@ -226,6 +238,24 @@ export default {
     },
     // 映射Getters
     ...mapGetters(['goodsList']),
+    //映射searchList的数据
+    ...mapState({
+      total: state => state.search.searchList.total,
+    }),
+    // 综合还是价格
+    isOne() {
+      return this.searchParams.order.indexOf('1') != -1
+    },
+    isTwo() {
+      return this.searchParams.order.indexOf('2') != -1
+    },
+    // 排序箭头
+    isAsc() {
+      return this.searchParams.order.indexOf('asc') != -1
+    },
+    isDesc() {
+      return this.searchParams.order.indexOf('desc') != -1
+    },
   },
   components: {
     SearchSelector,

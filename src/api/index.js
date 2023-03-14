@@ -17,3 +17,21 @@ export const reqGetFloorList = () => mockRequests.get('/floor')
 //获取搜索模块内容 /api/list 方式post 需要带参数
 // 当前这个接口必须有参数
 export const reqGetSearchInfo = (params) => requests({url: '/list', method: "post", data: params})
+//获取商品详情 /api/item/{ skuId }
+export const reqGoodsInfo = (skuId) => requests({url: `/item/${skuId}`, method: "get"})
+//添加到购物车 /api/cart/addToCart/{ skuId }/{ skuNum }
+export const reqAddOrUpdateShopCart = (skuId, skuNum) => requests({
+    url: `/cart/addToCart/${skuId}/${skuNum}`,
+    method: 'post',
+})
+// 获取购物车列表 /api/cart/cartList
+export const reqGetCartList = () => requests({url: '/cart/cartList', method: 'get'})
+//购物城车删除商品  /api/cart/deleteCart/{skuId}
+export const reqDeleteCartById = (skuId) => requests({
+    url: `/cart/deleteCart/${skuId}`,
+    method: 'delete',
+})
+// 修改产品选中状态 /api/cart/checkCart/{skuID}/{isChecked}
+export const reqUpdateCheckedById = (skuID, isChecked) => requests({
+    url: `/cart/checkCart/${skuID}/${isChecked}`, method: 'get',
+})
